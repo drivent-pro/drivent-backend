@@ -2,7 +2,7 @@ import { User } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import { eventsService } from '@/services';
 import { cannotEnrollBeforeStartDateError, duplicatedEmailError } from '@/errors';
-import { userRepository } from '@/repositories';
+import { bookingRepository, enrollmentRepository, hotelRepository, paymentsRepository, ticketsRepository, userRepository } from '@/repositories';
 
 export async function createUser({ email, password }: CreateUserParams): Promise<User> {
   await canEnrollOrFail();
@@ -14,6 +14,24 @@ export async function createUser({ email, password }: CreateUserParams): Promise
     email,
     password: hashedPassword,
   });
+}
+
+export async function getInfoByUser(user: any){
+  const infoByUser = await userRepository.getInfoByUser(user);
+  const infoByEnrollment = await enrollmentRepository.findWithAddressByUserId(infoByUser.id);
+  if(infoByEnrollment === null){
+    return infoByUser
+  }
+  const infoByTicket = await ticketsRepository.findTicketByEnrollmentId(infoByEnrollment.id);
+  const infoByPayment = await paymentsRepository.findPaymentByTicketId(infoByTicket.id);
+  const infoByBooking = await bookingRepository.findByUserId(infoByUser.id);
+  return {
+    infoByUser,
+    infoByEnrollment,
+    infoByTicket,
+    infoByPayment,
+    infoByBooking
+  };
 }
 
 async function validateUniqueEmailOrFail(email: string) {
@@ -34,4 +52,5 @@ export type CreateUserParams = Pick<User, 'email' | 'password'>;
 
 export const userService = {
   createUser,
+  getInfoByUser
 };

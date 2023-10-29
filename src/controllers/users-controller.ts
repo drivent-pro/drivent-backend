@@ -12,3 +12,11 @@ export async function usersPost(req: Request, res: Response) {
     email: user.email,
   });
 }
+
+export async function getInfoByUser(req: Request, res: Response){
+  const {userData} = req.params;
+  console.log(userData);
+  const info = await userService.getInfoByUser(userData);
+
+  res.status(200).send(info);
+}
