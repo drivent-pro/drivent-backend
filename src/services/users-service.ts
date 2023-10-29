@@ -16,14 +16,22 @@ export async function createUser({ email, password }: CreateUserParams): Promise
   });
 }
 
-export async function getInfoByUser(user: any){
+export async function getInfoByUser(user: any) {
   const infoByUser = await userRepository.getInfoByUser(user);
   const infoByEnrollment = await enrollmentRepository.findWithAddressByUserId(infoByUser.id);
-  if(infoByEnrollment === null){
+  if (infoByEnrollment === null) {
     return infoByUser
   }
   const infoByTicket = await ticketsRepository.findTicketByEnrollmentId(infoByEnrollment.id);
   const infoByPayment = await paymentsRepository.findPaymentByTicketId(infoByTicket.id);
+  if (infoByTicket.TicketType.includesHotel === false) {
+    return {
+      infoByUser,
+      infoByEnrollment,
+      infoByTicket,
+      infoByPayment
+    }
+  }
   const infoByBooking = await bookingRepository.findByUserId(infoByUser.id);
   return {
     infoByUser,
