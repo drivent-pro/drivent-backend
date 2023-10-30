@@ -72,7 +72,10 @@ web_modules/
 # Yarn Integrity file
 .yarn-integrity
 
+
 # dotenv environment variable files
+.env*
+*.env
 .env
 .env.development
 .env.development.local
@@ -129,3 +132,4 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+.env.development
