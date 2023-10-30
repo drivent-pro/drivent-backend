@@ -19,7 +19,7 @@ export async function createUser({ email, password }: CreateUserParams): Promise
 export async function getInfoByUser(user: any) {
   const infoByUser = await userRepository.getInfoByUser(user);
   const infoByEnrollment = await enrollmentRepository.findWithAddressByUserId(infoByUser.id);
-  if (infoByEnrollment === null) {
+  if (infoByEnrollment === null || !infoByEnrollment.id) {
     return infoByUser
   }
   const infoByTicket = await ticketsRepository.findTicketByEnrollmentId(infoByEnrollment.id);

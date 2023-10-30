@@ -39,9 +39,22 @@ model Event {
   endsAt             DateTime
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
+
+  activities Activities[]
 }
 
-model Enrollment {
+model Activities {
+  id       Int      @id @default(autoincrement())
+  Event    Event    @relation(fields: [eventId], references: [id])
+  eventId  Int
+  name     String
+  places   Int
+  startsAt DateTime
+  endsAt   DateTime
+  local    String
+}
+
+  model Enrollment {
   id        Int       @id @default(autoincrement())
   name      String    @db.VarChar(255)
   cpf       String    @db.VarChar(255)

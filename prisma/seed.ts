@@ -4,6 +4,8 @@ const prisma = new PrismaClient();
 
 async function main() {
   let event = await prisma.event.findFirst();
+  let activitie = await prisma.activities.findFirst();
+  
   if (!event) {
     event = await prisma.event.create({
       data: {
@@ -16,7 +18,22 @@ async function main() {
     });
   }
 
-  console.log({ event });
+  if (!activitie) {
+    const startsAt = dayjs('2023-10-30T09:00:00');
+    
+    activitie = await prisma.activities.create({
+      data: {
+        eventId: event.id,
+        name: "Aula de JS",
+        places: 10,
+        startsAt: startsAt.toDate(),
+        endsAt: startsAt.add(1, "hours").toDate(),
+        local: "Auditório principal"
+      }
+    });
+  }
+
+  console.log({ event, activitie });
 }
 
 main()
